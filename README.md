@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/bornholdtleegmbh/response-evaluator?color=%230087ff&style=for-the-badge)
 ![GitHub top language](https://img.shields.io/github/languages/top/bornholdtleegmbh/response-evaluator?color=%23875dff&style=for-the-badge)
 
-The ResponseEvaluator will map a `retrofit2.Response<T>` bbject to a sealed kotlin class `Result<T>`.
+The `ResponseEvaluator` maps a `retrofit2.Response<T>` object to a kotlin sealed class `Result<T>`.
 
 This gives you a conveniant way to differentiate the different api results using kotlins when-statement.
 
@@ -42,3 +42,7 @@ when(apiResult){
   is ResponseEvaluator.Result.Failure.UnknownError -> {}
 }
 ````
+
+## Installation
+
+TODO
