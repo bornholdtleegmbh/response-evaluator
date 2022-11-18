@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'maven-publish'
 }
 
 android {
@@ -34,4 +35,17 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.9'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.bornholdtleegmbh'
+                artifactId = 'response-evaluator'
+                version = '1.0.0'
+            }
+        }
+    }
 }
