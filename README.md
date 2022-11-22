@@ -1,5 +1,6 @@
 # Retrofit Response Evaluator for Android
 
+![JitPack](https://img.shields.io/jitpack/version/com.github.bornholdtleegmbh/response-evaluator?color=%23cdb83&style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/bornholdtleegmbh/response-evaluator?color=%230087ff&style=for-the-badge)
 ![GitHub top language](https://img.shields.io/github/languages/top/bornholdtleegmbh/response-evaluator?color=%23875dff&style=for-the-badge)
 
