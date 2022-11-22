@@ -16,30 +16,30 @@ This gives you a conveniant way to differentiate the different api results using
 val apiResult = ResponseEvaluator.evaluate(apiResponse)
 
 when(apiResult){
-  is ResponseEvaluator.Result.Success -> {
-    result.response.body()?.let { responseObject ->
+  is APIResult.Success -> {
+    apiResult.response.body()?.let { responseObject ->
       // ...
     }
   }
-  is ResponseEvaluator.Result.Failure.ClientError -> {}
-  is ResponseEvaluator.Result.Failure.ServerError -> {}
+  is APIResult.Failure.ClientError -> {}
+  is APIResult.Failure.ServerError -> {}
 }
 
 // or fully specified
 
 when(apiResult){
-  is ResponseEvaluator.Result.Success.Ok -> {}
-  is ResponseEvaluator.Result.Success.Accepted -> {}
-  is ResponseEvaluator.Result.Success.Created -> {}
-  is ResponseEvaluator.Result.Failure.ClientError.BadRequest -> {}
-  is ResponseEvaluator.Result.Failure.ClientError.Forbidden -> {}
-  is ResponseEvaluator.Result.Failure.ClientError.NotFound -> {}
-  is ResponseEvaluator.Result.Failure.ClientError.Unauthorized -> {}
-  is ResponseEvaluator.Result.Failure.ServerError.BadGateway -> {}
-  is ResponseEvaluator.Result.Failure.ServerError.GatewayTimeout -> {}
-  is ResponseEvaluator.Result.Failure.ServerError.InternalError -> {}
-  is ResponseEvaluator.Result.Failure.ServerError.Unavailable -> {}
-  is ResponseEvaluator.Result.Failure.UnknownError -> {}
+  is APIResult.Success.Ok -> {}
+  is APIResult.Success.Accepted -> {}
+  is APIResult.Success.Created -> {}
+  is APIResult.Failure.ClientError.BadRequest -> {}
+  is APIResult.Failure.ClientError.Forbidden -> {}
+  is APIResult.Failure.ClientError.NotFound -> {}
+  is APIResult.Failure.ClientError.Unauthorized -> {}
+  is APIResult.Failure.ServerError.BadGateway -> {}
+  is APIResult.Failure.ServerError.GatewayTimeout -> {}
+  is APIResult.Failure.ServerError.InternalError -> {}
+  is APIResult.Failure.ServerError.Unavailable -> {}
+  is APIResult.Failure.UnknownError -> {}
 }
 ````
 
