@@ -12,6 +12,7 @@ import java.net.HttpURLConnection.*
 
 object ResponseEvaluator {
 
+    private const val HTTP_UPGRADE_REQUIRED = 426
     private const val HTTP_CODE_UNKNOWN = 600
 
     fun <T> evaluate(response: Response<T>?): APIResult<T> {
@@ -39,6 +40,9 @@ object ResponseEvaluator {
             HTTP_UNAUTHORIZED -> Unauthorized(response)
             HTTP_FORBIDDEN -> Forbidden(response)
             HTTP_NOT_FOUND -> NotFound(response)
+            HTTP_CONFLICT -> Conflict(response)
+            HTTP_GONE -> Gone(response)
+            HTTP_UPGRADE_REQUIRED -> UpgradeRequired(response)
             else -> null
         }
 

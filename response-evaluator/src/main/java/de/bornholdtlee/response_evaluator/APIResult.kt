@@ -33,6 +33,15 @@ sealed class APIResult<T>(val response: Response<T>) {
 
             /** Http-Status 404 **/
             class NotFound<T>(response: Response<T>) : ClientError<T>(response)
+
+            /** Http-Status 409 **/
+            class Conflict<T>(response: Response<T>) : ClientError<T>(response)
+
+            /** Http-Status 410 **/
+            class Gone<T>(response: Response<T>) : ClientError<T>(response)
+
+            /** Http-Status 426 **/
+            class UpgradeRequired<T>(response: Response<T>) : ClientError<T>(response)
         }
 
         /** Http-Status 500 - 599 **/
