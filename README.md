@@ -36,6 +36,9 @@ when(apiResult){
   is APIResult.Failure.ClientError.Forbidden -> {}
   is APIResult.Failure.ClientError.NotFound -> {}
   is APIResult.Failure.ClientError.Unauthorized -> {}
+  is APIResult.Failure.ClientError.Conflict -> {}
+  is APIResult.Failure.ClientError.Gone -> {}
+  is APIResult.Failure.ClientError.UpgradeRequired -> {}
   is APIResult.Failure.ServerError.BadGateway -> {}
   is APIResult.Failure.ServerError.GatewayTimeout -> {}
   is APIResult.Failure.ServerError.InternalError -> {}
