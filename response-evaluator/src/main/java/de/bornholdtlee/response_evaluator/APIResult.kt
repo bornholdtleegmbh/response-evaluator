@@ -20,6 +20,7 @@ sealed interface APIResult<T> {
         class Other<T>(response: Response<T>) : Success<T>(response)
     }
 
+    /** Http-Status 300 - 399 **/
     class Redirect<T>(val response: Response<T>) : APIResult<T>
 
     /** Http-Status 400 - 599 **/
@@ -68,6 +69,6 @@ sealed interface APIResult<T> {
         }
     }
 
-    /** Http-Status 600 and above **/
+    /** Http-Status 600 and above or null response **/
     class Unknown<T> : APIResult<T>
 }
