@@ -13,7 +13,9 @@ class ExampleUseCase(
         val apiResult: APIResult<ExampleResponseDTO> = exampleRepository.getExampleDataFromApi(id)
 
         when (apiResult) {
-            is APIResult.Success.Ok -> {}
+            is APIResult.Success.Ok -> {
+
+            }
             is APIResult.Success.Created -> {}
             is APIResult.Success.Accepted -> {}
             is APIResult.Success.Other -> {}

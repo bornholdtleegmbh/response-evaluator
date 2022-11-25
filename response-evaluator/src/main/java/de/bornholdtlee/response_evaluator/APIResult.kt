@@ -5,7 +5,7 @@ import retrofit2.Response
 sealed interface APIResult<T> {
 
     /** Http-Status 200 - 299 **/
-    sealed class Success<T>(response: Response<T>) : APIResult<T> {
+    sealed class Success<T>(val response: Response<T>) : APIResult<T> {
 
         /** Http-Status 200 **/
         class Ok<T>(response: Response<T>) : Success<T>(response)
@@ -23,7 +23,7 @@ sealed interface APIResult<T> {
     class Redirect<T>(val response: Response<T>) : APIResult<T>
 
     /** Http-Status 400 - 599 **/
-    sealed class Failure<T>(response: Response<T>) : APIResult<T> {
+    sealed class Failure<T>(val response: Response<T>) : APIResult<T> {
 
         /** Http-Status 400 - 499 **/
         sealed class ClientError<T>(response: Response<T>) : Failure<T>(response) {
