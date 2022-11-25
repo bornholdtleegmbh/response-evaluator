@@ -15,7 +15,12 @@ sealed class APIResult<T>(val response: Response<T>) {
 
         /** Http-Status 202 **/
         class Accepted<T>(response: Response<T>) : Success<T>(response)
+
+        /** Http-Status 203 - 226 **/
+        class Other<T>(response: Response<T>) : Success<T>(response)
     }
+
+    class Redirect<T>(response: Response<T>) : APIResult<T>(response)
 
     /** Http-Status 400 - 599 **/
     sealed class Failure<T>(response: Response<T>) : APIResult<T>(response) {
@@ -40,8 +45,8 @@ sealed class APIResult<T>(val response: Response<T>) {
             /** Http-Status 410 **/
             class Gone<T>(response: Response<T>) : ClientError<T>(response)
 
-            /** Http-Status 426 **/
-            class UpgradeRequired<T>(response: Response<T>) : ClientError<T>(response)
+            /** all other Http-Status 4** **/
+            class Other<T>(response: Response<T>) : ClientError<T>(response)
         }
 
         /** Http-Status 500 - 599 **/
@@ -57,6 +62,9 @@ sealed class APIResult<T>(val response: Response<T>) {
 
             /** Http-Status 504 **/
             class GatewayTimeout<T>(response: Response<T>) : ServerError<T>(response)
+
+            /** all other Http-Status 5** **/
+            class Other<T>(response: Response<T>) : ServerError<T>(response)
         }
 
         /** Http-Status 600 and above **/
