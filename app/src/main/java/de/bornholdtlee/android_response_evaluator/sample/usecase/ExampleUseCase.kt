@@ -30,9 +30,8 @@ class ExampleUseCase(
             is APIResult.Failure.ServerError.InternalError -> {}
             is APIResult.Failure.ServerError.Other -> {}
             is APIResult.Failure.ServerError.Unavailable -> {}
-            is APIResult.Failure.UnknownError -> {}
+            is APIResult.Unknown -> {}
         }
-
         return null
     }
 }

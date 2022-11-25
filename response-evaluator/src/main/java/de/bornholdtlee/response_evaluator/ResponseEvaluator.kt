@@ -1,9 +1,8 @@
 package de.bornholdtlee.response_evaluator
 
-import de.bornholdtlee.response_evaluator.APIResult.Failure.*
+import de.bornholdtlee.response_evaluator.APIResult.Failure.ClientError
+import de.bornholdtlee.response_evaluator.APIResult.Failure.ServerError
 import de.bornholdtlee.response_evaluator.APIResult.Success
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.net.HttpURLConnection.*
 
@@ -13,20 +12,19 @@ object ResponseEvaluator {
     private val httpCodeRangeRedirect = 300 until 400
     private val httpCodeRangeClientError = 400 until 500
     private val httpCodeRangeServerError = 500 until 600
-    private const val HTTP_CODE_UNKNOWN = 600
 
     fun <T> evaluate(response: Response<T>?): APIResult<T> {
-        response ?: return UnknownError(generateUnknownResponse())
+        response?.code() ?: return APIResult.Unknown()
         return when (response.code()) {
-            in httpCodeRangeSuccess -> processSuccess(response)
+            in httpCodeRangeSuccess -> mapSuccess(response)
             in httpCodeRangeRedirect -> APIResult.Redirect(response)
-            in httpCodeRangeClientError -> processClientError(response)
-            in httpCodeRangeServerError -> processServerError(response)
-            else -> UnknownError(response)
+            in httpCodeRangeClientError -> mapClientError(response)
+            in httpCodeRangeServerError -> mapServerError(response)
+            else -> APIResult.Unknown()
         }
     }
 
-    private fun <T> processSuccess(response: Response<T>): Success<T> {
+    private fun <T> mapSuccess(response: Response<T>): Success<T> {
         assert(response.code() in httpCodeRangeSuccess) {
             "response code must be in 200..299"
         }
@@ -38,7 +36,7 @@ object ResponseEvaluator {
         }
     }
 
-    private fun <T> processClientError(response: Response<T>): ClientError<T> {
+    private fun <T> mapClientError(response: Response<T>): ClientError<T> {
         assert(response.code() in httpCodeRangeClientError) {
             "response code must be in 400..499"
         }
@@ -53,7 +51,7 @@ object ResponseEvaluator {
         }
     }
 
-    private fun <T> processServerError(response: Response<T>): ServerError<T> {
+    private fun <T> mapServerError(response: Response<T>): ServerError<T> {
         assert(response.code() in httpCodeRangeServerError) {
             "response code must be in 500..599"
         }
@@ -65,9 +63,4 @@ object ResponseEvaluator {
             else -> ServerError.Other(response)
         }
     }
-
-    private fun <T> generateUnknownResponse(): Response<T> = Response.error(
-        HTTP_CODE_UNKNOWN,
-        "".toResponseBody("application/json".toMediaTypeOrNull())
-    )
 }
