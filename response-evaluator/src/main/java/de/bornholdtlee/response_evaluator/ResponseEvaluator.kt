@@ -1,63 +1,66 @@
 package de.bornholdtlee.response_evaluator
 
-import de.bornholdtlee.response_evaluator.APIResult.Failure.*
-import de.bornholdtlee.response_evaluator.APIResult.Failure.ClientError.*
-import de.bornholdtlee.response_evaluator.APIResult.Failure.ServerError.*
+import de.bornholdtlee.response_evaluator.APIResult.Failure.ClientError
+import de.bornholdtlee.response_evaluator.APIResult.Failure.ServerError
 import de.bornholdtlee.response_evaluator.APIResult.Success
-import de.bornholdtlee.response_evaluator.APIResult.Success.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.net.HttpURLConnection.*
 
 object ResponseEvaluator {
 
-    private const val HTTP_UPGRADE_REQUIRED = 426
-    private const val HTTP_CODE_UNKNOWN = 600
+    private val httpCodeRangeSuccess = 200 until 300
+    private val httpCodeRangeRedirect = 300 until 400
+    private val httpCodeRangeClientError = 400 until 500
+    private val httpCodeRangeServerError = 500 until 600
 
     fun <T> evaluate(response: Response<T>?): APIResult<T> {
-        response ?: return UnknownError(generateUnknownResponse())
+        response?.code() ?: return APIResult.Unknown()
         return when (response.code()) {
-            in HTTP_OK until HTTP_MULT_CHOICE -> processSuccess(response)
-            in HTTP_BAD_REQUEST until HTTP_INTERNAL_ERROR -> processClientError(response)
-            in HTTP_INTERNAL_ERROR until HTTP_CODE_UNKNOWN -> processServerError(response)
-            else -> null
-        } ?: UnknownError(response)
+            in httpCodeRangeSuccess -> mapSuccess(response)
+            in httpCodeRangeRedirect -> APIResult.Redirect(response)
+            in httpCodeRangeClientError -> mapClientError(response)
+            in httpCodeRangeServerError -> mapServerError(response)
+            else -> APIResult.Unknown()
+        }
     }
 
-    private fun <T> processSuccess(response: Response<T>): Success<T>? =
-        when (response.code()) {
-            HTTP_OK -> Ok(response)
-            HTTP_CREATED -> Created(response)
-            HTTP_ACCEPTED -> Accepted(response)
-            else -> null
+    private fun <T> mapSuccess(response: Response<T>): Success<T> {
+        assert(response.code() in httpCodeRangeSuccess) {
+            "response code must be in 200..299"
         }
-
-    @Throws(Exception::class)
-    private fun <T> processClientError(response: Response<T>): ClientError<T>? =
-        when (response.code()) {
-            HTTP_BAD_REQUEST -> BadRequest(response)
-            HTTP_UNAUTHORIZED -> Unauthorized(response)
-            HTTP_FORBIDDEN -> Forbidden(response)
-            HTTP_NOT_FOUND -> NotFound(response)
-            HTTP_CONFLICT -> Conflict(response)
-            HTTP_GONE -> Gone(response)
-            HTTP_UPGRADE_REQUIRED -> UpgradeRequired(response)
-            else -> null
+        return when (response.code()) {
+            HTTP_OK -> Success.Ok(response)
+            HTTP_CREATED -> Success.Created(response)
+            HTTP_ACCEPTED -> Success.Accepted(response)
+            else -> Success.Other(response)
         }
+    }
 
-    @Throws(Exception::class)
-    private fun <T> processServerError(response: Response<T>): ServerError<T>? =
-        when (response.code()) {
-            HTTP_INTERNAL_ERROR -> InternalError(response)
-            HTTP_BAD_GATEWAY -> BadGateway(response)
-            HTTP_UNAVAILABLE -> Unavailable(response)
-            HTTP_GATEWAY_TIMEOUT -> GatewayTimeout(response)
-            else -> null
+    private fun <T> mapClientError(response: Response<T>): ClientError<T> {
+        assert(response.code() in httpCodeRangeClientError) {
+            "response code must be in 400..499"
         }
+        return when (response.code()) {
+            HTTP_BAD_REQUEST -> ClientError.BadRequest(response)
+            HTTP_UNAUTHORIZED -> ClientError.Unauthorized(response)
+            HTTP_FORBIDDEN -> ClientError.Forbidden(response)
+            HTTP_NOT_FOUND -> ClientError.NotFound(response)
+            HTTP_CONFLICT -> ClientError.Conflict(response)
+            HTTP_GONE -> ClientError.Gone(response)
+            else -> ClientError.Other(response)
+        }
+    }
 
-    private fun <T> generateUnknownResponse(): Response<T> = Response.error(
-        HTTP_CODE_UNKNOWN,
-        "".toResponseBody("application/json".toMediaTypeOrNull())
-    )
+    private fun <T> mapServerError(response: Response<T>): ServerError<T> {
+        assert(response.code() in httpCodeRangeServerError) {
+            "response code must be in 500..599"
+        }
+        return when (response.code()) {
+            HTTP_INTERNAL_ERROR -> ServerError.InternalError(response)
+            HTTP_BAD_GATEWAY -> ServerError.BadGateway(response)
+            HTTP_UNAVAILABLE -> ServerError.Unavailable(response)
+            HTTP_GATEWAY_TIMEOUT -> ServerError.GatewayTimeout(response)
+            else -> ServerError.Other(response)
+        }
+    }
 }

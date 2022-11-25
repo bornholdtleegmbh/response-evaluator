@@ -2,10 +2,10 @@ package de.bornholdtlee.response_evaluator
 
 import retrofit2.Response
 
-sealed class APIResult<T>(val response: Response<T>) {
+sealed interface APIResult<T> {
 
     /** Http-Status 200 - 299 **/
-    sealed class Success<T>(response: Response<T>) : APIResult<T>(response) {
+    sealed class Success<T>(val response: Response<T>) : APIResult<T> {
 
         /** Http-Status 200 **/
         class Ok<T>(response: Response<T>) : Success<T>(response)
@@ -15,10 +15,16 @@ sealed class APIResult<T>(val response: Response<T>) {
 
         /** Http-Status 202 **/
         class Accepted<T>(response: Response<T>) : Success<T>(response)
+
+        /** Http-Status 203 - 226 **/
+        class Other<T>(response: Response<T>) : Success<T>(response)
     }
 
+    /** Http-Status 300 - 399 **/
+    class Redirect<T>(val response: Response<T>) : APIResult<T>
+
     /** Http-Status 400 - 599 **/
-    sealed class Failure<T>(response: Response<T>) : APIResult<T>(response) {
+    sealed class Failure<T>(val response: Response<T>) : APIResult<T> {
 
         /** Http-Status 400 - 499 **/
         sealed class ClientError<T>(response: Response<T>) : Failure<T>(response) {
@@ -40,8 +46,8 @@ sealed class APIResult<T>(val response: Response<T>) {
             /** Http-Status 410 **/
             class Gone<T>(response: Response<T>) : ClientError<T>(response)
 
-            /** Http-Status 426 **/
-            class UpgradeRequired<T>(response: Response<T>) : ClientError<T>(response)
+            /** all other Http-Status 4** **/
+            class Other<T>(response: Response<T>) : ClientError<T>(response)
         }
 
         /** Http-Status 500 - 599 **/
@@ -57,9 +63,12 @@ sealed class APIResult<T>(val response: Response<T>) {
 
             /** Http-Status 504 **/
             class GatewayTimeout<T>(response: Response<T>) : ServerError<T>(response)
-        }
 
-        /** Http-Status 600 and above **/
-        class UnknownError<T>(response: Response<T>) : Failure<T>(response)
+            /** all other Http-Status 5** **/
+            class Other<T>(response: Response<T>) : ServerError<T>(response)
+        }
     }
+
+    /** Http-Status 600 and above or null response **/
+    class Unknown<T> : APIResult<T>
 }

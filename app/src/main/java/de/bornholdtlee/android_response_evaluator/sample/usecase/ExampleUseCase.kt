@@ -13,23 +13,27 @@ class ExampleUseCase(
         val apiResult: APIResult<ExampleResponseDTO> = exampleRepository.getExampleDataFromApi(id)
 
         when (apiResult) {
-            is APIResult.Success.Ok -> {}
+            is APIResult.Success.Ok -> {
+
+            }
             is APIResult.Success.Created -> {}
             is APIResult.Success.Accepted -> {}
+            is APIResult.Success.Other -> {}
+            is APIResult.Redirect -> {}
             is APIResult.Failure.ClientError.BadRequest -> {}
             is APIResult.Failure.ClientError.Conflict -> {}
             is APIResult.Failure.ClientError.Forbidden -> {}
             is APIResult.Failure.ClientError.Gone -> {}
             is APIResult.Failure.ClientError.NotFound -> {}
+            is APIResult.Failure.ClientError.Other -> {}
             is APIResult.Failure.ClientError.Unauthorized -> {}
-            is APIResult.Failure.ClientError.UpgradeRequired -> {}
             is APIResult.Failure.ServerError.BadGateway -> {}
             is APIResult.Failure.ServerError.GatewayTimeout -> {}
             is APIResult.Failure.ServerError.InternalError -> {}
+            is APIResult.Failure.ServerError.Other -> {}
             is APIResult.Failure.ServerError.Unavailable -> {}
-            is APIResult.Failure.UnknownError -> {}
+            is APIResult.Unknown -> {}
         }
-
         return null
     }
 }
