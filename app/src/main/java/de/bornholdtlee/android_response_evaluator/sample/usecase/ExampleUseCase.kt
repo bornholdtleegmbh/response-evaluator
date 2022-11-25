@@ -13,9 +13,7 @@ class ExampleUseCase(
         val apiResult: APIResult<ExampleResponseDTO> = exampleRepository.getExampleDataFromApi(id)
 
         when (apiResult) {
-            is APIResult.Success.Ok -> {
-
-            }
+            is APIResult.Success.Ok -> {}
             is APIResult.Success.Created -> {}
             is APIResult.Success.Accepted -> {}
             is APIResult.Success.Other -> {}
@@ -30,8 +28,8 @@ class ExampleUseCase(
             is APIResult.Failure.ServerError.BadGateway -> {}
             is APIResult.Failure.ServerError.GatewayTimeout -> {}
             is APIResult.Failure.ServerError.InternalError -> {}
-            is APIResult.Failure.ServerError.Other -> {}
             is APIResult.Failure.ServerError.Unavailable -> {}
+            is APIResult.Failure.ServerError.Other -> {}
             is APIResult.Unknown -> {}
         }
         return null
